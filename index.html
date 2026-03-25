@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern Invoice Generator</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <!-- PDF Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+
+    <main class="app-container" id="app-content" style="display: none;">
+        <!-- LEFT PANEL: Editor -->
+        <section class="editor-panel glass-panel stagger-1">
+            <header class="editor-header">
+                <div class="header-logo">
+                    <i class="ri-article-line highlight-icon"></i>
+                    <h1>Invoice<span class="gradient-text">Gen</span></h1>
+                </div>
+                <div class="auth-container">
+                    <div id="auth-user-info" style="display: flex; align-items: center; gap: 1rem;">
+                        <span id="auth-user-email" style="font-size: 0.85rem; opacity: 0.8;"></span>
+                        <button class="btn btn-secondary btn-sm" id="btn-logout" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;">Sign Out</button>
+                    </div>
+                </div>
+                <!-- Action button at top for mobile -->
+                <button class="btn btn-primary btn-generate mobile-only" id="btn-generate-mobile">
+                    <i class="ri-download-cloud-2-line"></i> Download PDF
+                </button>
+            </header>
+
+            <form id="invoice-form" class="editor-content">
+                <!-- Meta Section -->
+                <div class="form-section stagger-2">
+                    <h2 class="section-title">Invoice Details</h2>
+                    <div class="input-row">
+                        <div class="input-group">
+                            <label for="inv-number">Invoice Number</label>
+                            <input type="text" id="inv-number" value="INV-001" placeholder="e.g. INV-001">
+                        </div>
+                        <div class="input-group">
+                            <label for="inv-date">Invoice Date</label>
+                            <input type="text" id="inv-date" placeholder="e.g. 23 February 2026">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Parties Section -->
+                <div class="form-section stagger-3">
+                    <h2 class="section-title">Parties</h2>
+                    <div class="input-row">
+                        <div class="input-group">
+                            <label for="inv-from">From</label>
+                            <textarea id="inv-from" rows="3" placeholder="Your Name/Company&#10;Address Line 1&#10;Address Line 2"></textarea>
+                        </div>
+                        <div class="input-group">
+                            <label for="inv-to">To</label>
+                            <textarea id="inv-to" rows="3" placeholder="Client Name/Company&#10;Address Line 1&#10;Address Line 2"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Subject & Description -->
+                <div class="form-section stagger-4">
+                    <h2 class="section-title">Project Context</h2>
+                    <div class="input-group">
+                        <label for="inv-subject">Subject</label>
+                        <input type="text" id="inv-subject" placeholder="e.g. Invoice for Script Preparation...">
+                    </div>
+                    <div class="input-group">
+                        <label for="inv-desc">Description</label>
+                        <textarea id="inv-desc" rows="3" placeholder="This invoice is for the work completed..."></textarea>
+                    </div>
+                </div>
+
+                <!-- Items Section -->
+                <div class="form-section stagger-5">
+                    <h2 class="section-title">Line Items</h2>
+                    <div id="items-container">
+                        <!-- Items injected here by JS -->
+                    </div>
+                    <button type="button" class="btn btn-secondary" id="btn-add-item">
+                        <i class="ri-add-line"></i> Add Item
+                    </button>
+                </div>
+
+                <!-- Payment Details -->
+                <div class="form-section stagger-6">
+                    <h2 class="section-title">Payment Info</h2>
+                    <div class="input-grid">
+                        <div class="input-group"><label>Mode of Payment</label><input type="text" id="pay-mode" placeholder="e.g. Bank Transfer"></div>
+                        <div class="input-group"><label>Account Number</label><input type="text" id="pay-acc" placeholder="e.g. 1234567890"></div>
+                        <div class="input-group"><label>IFSC Code</label><input type="text" id="pay-ifsc" placeholder="e.g. ABCD0001234"></div>
+                        <div class="input-group"><label>UPI ID</label><input type="text" id="pay-upi" placeholder="e.g. user@bank"></div>
+                        <div class="input-group"><label>PAN</label><input type="text" id="pay-pan" placeholder="e.g. ABCDE1234F"></div>
+                        <div class="input-group"><label>Email</label><input type="email" id="pay-email" placeholder="e.g. email@example.com"></div>
+                        <div class="input-group"><label>Phone Number</label><input type="text" id="pay-phone" placeholder="e.g. +91 9876543210 (PhonePe, GPay)"></div>
+                    </div>
+                </div>
+
+                <!-- Signatory -->
+                <div class="form-section stagger-7">
+                    <h2 class="section-title">Signatory</h2>
+                    <div class="input-group">
+                        <label for="inv-sign-msg">Footer Message</label>
+                        <input type="text" id="inv-sign-msg" value="Kindly process the payment for the above-mentioned work." placeholder="Closing message">
+                    </div>
+                    <div class="input-group">
+                        <label for="inv-sign-name">Signatory Name</label>
+                        <input type="text" id="inv-sign-name" placeholder="e.g. Punna Gurunanda">
+                    </div>
+                </div>
+            </form>
+        </section>
+
+        <!-- RIGHT PANEL: Preview -->
+        <section class="preview-panel stagger-8">
+            <div class="preview-toolbar">
+                <span class="preview-badge">Live Preview</span>
+                <button class="btn btn-primary" id="btn-generate-desktop">
+                    <i class="ri-download-cloud-2-line"></i> Generate PDF
+                </button>
+            </div>
+            
+            <div class="preview-wrapper">
+                <!-- The actual invoice to be exported -->
+                <div class="invoice-page-wrapper">
+                    <div id="invoice-preview" class="invoice-document">
+                        
+                        <div class="invoice-header">
+                            <h1>INVOICE</h1>
+                        </div>
+
+                        <div class="invoice-meta">
+                            <div>Invoice Number: <span id="out-inv-number"></span></div>
+                            <div>Invoice Date: <span id="out-inv-date"></span></div>
+                        </div>
+
+                        <div class="invoice-parties">
+                            <div class="party-block">
+                                <span class="party-label">From:</span>
+                                <div id="out-inv-from" class="pre-line"></div>
+                            </div>
+                            <div class="party-block">
+                                <span class="party-label">To:</span>
+                                <div id="out-inv-to" class="pre-line"></div>
+                            </div>
+                        </div>
+
+                        <div class="invoice-subject">
+                            Subject: <span id="out-inv-subject"></span>
+                        </div>
+
+                        <div class="invoice-description pre-line" id="out-inv-desc"></div>
+
+                        <div class="invoice-table-wrapper">
+                            <table class="invoice-table">
+                                <thead>
+                                    <tr>
+                                        <th class="col-desc">Description</th>
+                                        <th class="col-amt">Amount (₹)</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="out-items-body">
+                                    <!-- Rows injected here -->
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td class="col-desc text-right font-bold">Total Amount Payable</td>
+                                        <td class="col-amt font-bold" id="out-total">0</td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+
+                        <div class="invoice-payment">
+                            <div class="pay-row" id="row-pay-mode"><span class="pay-label">Mode of Payment:</span> <span id="out-pay-mode"></span></div>
+                            <div class="pay-row" id="row-pay-acc"><span class="pay-label">Account Number:</span> <span id="out-pay-acc"></span></div>
+                            <div class="pay-row" id="row-pay-ifsc"><span class="pay-label">IFSC Code:</span> <span id="out-pay-ifsc"></span></div>
+                            <div class="pay-row" id="row-pay-upi"><span class="pay-label">UPI ID:</span> <span id="out-pay-upi"></span></div>
+                            <div class="pay-row" id="row-pay-pan"><span class="pay-label">PAN:</span> <span id="out-pay-pan"></span></div>
+                            <div class="pay-row" id="row-pay-email"><span class="pay-label">Email:</span> <span id="out-pay-email"></span></div>
+                            <div class="pay-row" id="row-pay-phone"><span class="pay-label">Phone Number:</span> <span id="out-pay-phone"></span></div>
+                        </div>
+
+                        <div class="invoice-signatory">
+                            <div id="out-inv-sign-msg"></div>
+                            <br><br>
+                            <div>Sincerely,</div>
+                            <div id="out-inv-sign-name" class="font-bold"></div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+        <!-- Login Page -->
+        <div class="login-wrapper" id="login-page" style="display: flex;">
+            <div class="auth-panel glass-panel">
+                <div class="header-logo" style="display: flex; justify-content: center; margin-bottom: 1.5rem;">
+                    <i class="ri-article-line highlight-icon"></i>
+                    <h1 style="font-size: 1.5rem; font-weight: 700;">Invoice<span class="gradient-text">Gen</span></h1>
+                </div>
+
+                <h2 class="section-title" id="auth-title" style="margin-bottom: 0.5rem; justify-content: center; text-align: center;">Welcome Back</h2>
+                <p id="auth-subtitle" style="margin-bottom: 2rem; opacity: 0.7; font-size: 0.9rem; text-align: center;">Sign in to sync your generated invoices.</p>
+                
+                <form id="auth-form" class="editor-content" style="padding: 0; display: block; overflow: visible;">
+                    <div id="auth-error" class="auth-error-msg" style="display: none; color: #ff6b6b; font-size: 0.85rem; margin-bottom: 1rem; background: rgba(255,107,107,0.1); padding: 0.5rem; border-radius: 8px;"></div>
+                    <div class="input-group">
+                        <label for="auth-email">Email</label>
+                        <input type="email" id="auth-email" required placeholder="you@example.com">
+                    </div>
+                    <div class="input-group" style="margin-top: 1rem;">
+                        <label for="auth-password">Password</label>
+                        <input type="password" id="auth-password" required placeholder="••••••••">
+                    </div>
+                    <button type="submit" class="btn btn-primary" id="btn-auth-submit" style="width: 100%; margin-top: 1.5rem; justify-content: center;">
+                        <i class="ri-login-circle-line"></i> Sign In
+                    </button>
+                </form>
+                
+                <div class="auth-divider"><span>or</span></div>
+                
+                <button type="button" class="btn btn-secondary" id="btn-google-auth" style="width: 100%; display: flex; justify-content: center; align-items: center; gap: 0.5rem;">
+                    <i class="ri-google-fill"></i> Continue with Google
+                </button>
+
+                <button type="button" class="btn btn-secondary" id="btn-guest-mode" onclick="window.location.href='/?guest=true'" style="width: 100%; display: flex; justify-content: center; align-items: center; gap: 0.5rem; margin-top: 0.5rem; opacity: 0.7; border-style: dashed;">
+                    <i class="ri-user-line"></i> Continue as Guest
+                </button>
+                
+                <div class="auth-switch">
+                    <span id="auth-switch-text">New here?</span>
+                    <button class="btn-text" id="btn-switch-auth-mode" type="button">Create an account</button>
+                </div>
+            </div>
+        </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="auth.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

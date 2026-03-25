@@ -1,0 +1,663 @@
+:root {
+    /* Colors */
+    --bg-dark: #0a0a0f;
+    --glass-bg: rgba(26, 26, 38, 0.6);
+    --glass-border: rgba(255, 255, 255, 0.08);
+    --accent-primary: #7c3aed; /* Violet */
+    --accent-secondary: #06b6d4; /* Cyan */
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+    --error: #ef4444;
+    
+    /* Paper (Preview) Colors */
+    --paper-bg: #ffffff;
+    --paper-text: #0f172a;
+    --paper-border: #cbd5e1;
+    --paper-header-bg: #e2e8f0;
+    
+    /* Variables */
+    --border-radius-lg: 16px;
+    --border-radius-md: 10px;
+    --border-radius-sm: 6px;
+    --transition: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg-dark);
+    color: var(--text-primary);
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Background Animated Blobs */
+.blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(100px);
+    z-index: -1;
+    opacity: 0.4;
+    animation: float 20s infinite ease-in-out alternate;
+}
+
+.blob-1 {
+    top: -10%;
+    left: -10%;
+    width: 600px;
+    height: 600px;
+    background: var(--accent-primary);
+    animation-delay: 0s;
+}
+
+.blob-2 {
+    bottom: -20%;
+    right: -10%;
+    width: 700px;
+    height: 700px;
+    background: var(--accent-secondary);
+    animation-delay: -5s;
+}
+
+.blob-3 {
+    top: 40%;
+    left: 40%;
+    width: 400px;
+    height: 400px;
+    background: #e81cff; /* Magenta mix */
+    animation-delay: -10s;
+    opacity: 0.2;
+}
+
+@keyframes float {
+    0% { transform: translate(0, 0) scale(1); }
+    100% { transform: translate(50px, 50px) scale(1.1); }
+}
+
+/* App Layout */
+.app-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    padding: 2rem;
+    height: 100vh;
+    max-width: 1800px;
+    margin: 0 auto;
+}
+
+/* Glassmorphism Panel */
+.glass-panel {
+    background: var(--glass-bg);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--border-radius-lg);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+/* Left Panel - Editor */
+.editor-panel {
+    height: 100%;
+}
+
+.editor-header {
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid var(--glass-border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(0,0,0,0.2);
+}
+
+.header-logo {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.highlight-icon {
+    font-size: 1.75rem;
+    color: var(--accent-secondary);
+    background: linear-gradient(135deg, var(--accent-secondary), var(--accent-primary));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.editor-header h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+}
+
+.gradient-text {
+    background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.editor-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+}
+
+/* Custom Scrollbar for Editor */
+.editor-content::-webkit-scrollbar {
+    width: 6px;
+}
+.editor-content::-webkit-scrollbar-track {
+    background: transparent;
+}
+.editor-content::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+}
+.editor-content::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* Form Styles */
+.form-section {
+    animation: fadeInSlideUp 0.6s var(--transition) both;
+}
+
+.section-title {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-muted);
+    margin-bottom: 1.25rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.section-title::after {
+    content: '';
+    height: 1px;
+    flex: 1;
+    background: var(--glass-border);
+}
+
+.input-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+}
+
+.input-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.25rem;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.input-group label {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+input, textarea {
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--border-radius-sm);
+    padding: 0.875rem 1rem;
+    color: var(--text-primary);
+    font-family: inherit;
+    font-size: 0.95rem;
+    transition: all 0.3s var(--transition);
+    width: 100%;
+}
+
+textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+input:focus, textarea:focus {
+    outline: none;
+    border-color: var(--accent-secondary);
+    background: rgba(0, 0, 0, 0.4);
+    box-shadow: 0 0 0 4px rgba(6, 182, 212, 0.1);
+}
+
+input::placeholder, textarea::placeholder {
+    color: rgba(255, 255, 255, 0.2);
+}
+
+/* Items specific */
+.item-row {
+    display: grid;
+    grid-template-columns: 1fr 150px 40px;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.03);
+    padding: 1rem;
+    border-radius: var(--border-radius-md);
+    border: 1px solid rgba(255,255,255,0.05);
+    animation: fadeInSlideIn 0.4s var(--transition);
+}
+
+.item-row.removing {
+    animation: fadeOutSlideOut 0.4s var(--transition) forwards;
+}
+
+.btn-remove-item {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(239, 68, 68, 0.1);
+    color: var(--error);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    align-self: flex-end;
+    margin-bottom: 0.2rem;
+}
+
+.btn-remove-item:hover {
+    background: var(--error);
+    color: white;
+    transform: scale(1.1);
+}
+
+/* Buttons */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.875rem 1.5rem;
+    border-radius: var(--border-radius-md);
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.3s var(--transition);
+    border: none;
+    font-family: inherit;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+    color: white;
+    box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(124, 58, 237, 0.4);
+    filter: brightness(1.1);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+}
+
+.btn-secondary {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-primary);
+    border: 1px solid var(--glass-border);
+}
+
+.btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.mobile-only {
+    display: none;
+}
+
+/* Right Panel - Preview Wrapper */
+.preview-panel {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background: rgba(0,0,0,0.2);
+    border-radius: var(--border-radius-lg);
+    border: 1px solid var(--glass-border);
+    overflow: hidden;
+}
+
+.preview-toolbar {
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--glass-bg);
+    border-bottom: 1px solid var(--glass-border);
+}
+
+.preview-badge {
+    background: rgba(6, 182, 212, 0.1);
+    color: var(--accent-secondary);
+    padding: 0.35rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border: 1px solid rgba(6, 182, 212, 0.2);
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+.preview-badge::before {
+    content: '';
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent-secondary);
+    box-shadow: 0 0 8px var(--accent-secondary);
+    animation: pulse 2s infinite;
+}
+
+.preview-wrapper {
+    flex: 1;
+    overflow-y: auto;
+    padding: 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+/* Custom Scrollbar for Preview Wrapper */
+.preview-wrapper::-webkit-scrollbar {
+    width: 8px;
+}
+.preview-wrapper::-webkit-scrollbar-track {
+    background: transparent;
+}
+.preview-wrapper::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+}
+
+/* A4 Paper Document Styling (The actual invoice) */
+.invoice-page-wrapper {
+    background: var(--paper-bg);
+    width: 210mm; /* A4 width */
+    min-height: 297mm; /* A4 height */
+    padding: 20mm 0;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+    margin: 0 auto;
+    position: relative;
+    transform-origin: top center;
+}
+
+.invoice-document {
+    background: var(--paper-bg);
+    color: var(--paper-text);
+    padding: 0 20mm;
+    font-family: Arial, Helvetica, sans-serif; /* Clean standard font for invoice */
+    font-size: 11pt;
+    line-height: 1.5;
+}
+
+/* Rest of invoice typography */
+
+.invoice-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.invoice-header h1 {
+    font-size: 24pt;
+    font-weight: bold;
+    letter-spacing: 1px;
+    margin: 0;
+}
+
+.invoice-meta {
+    margin-bottom: 25px;
+}
+
+.invoice-parties {
+    display: flex;
+    justify-content: flex-start;
+    gap: 80px;
+    margin-bottom: 30px;
+}
+
+.party-block {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.party-label {
+    display: inline-block;
+    width: 45px;
+}
+
+.pre-line {
+    white-space: pre-line;
+}
+
+.invoice-subject {
+    margin-bottom: 20px;
+}
+
+.invoice-description {
+    margin-bottom: 30px;
+}
+
+.invoice-table-wrapper {
+    margin-bottom: 40px;
+}
+
+.invoice-table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid var(--paper-border);
+}
+
+.invoice-table th, .invoice-table td {
+    border: 1px solid var(--paper-border);
+    padding: 8px 12px;
+}
+
+.invoice-table th {
+    background-color: var(--paper-header-bg);
+    text-align: left;
+    font-weight: normal;
+}
+
+.col-amt {
+    width: 120px;
+    text-align: right !important;
+    font-family: 'JetBrains Mono', monospace;
+}
+
+.text-right { text-align: right; }
+.font-bold { font-weight: bold; }
+
+.invoice-payment {
+    margin-bottom: 40px;
+    font-size: 10pt;
+}
+
+.pay-row {
+    display: flex;
+    margin-bottom: 2px;
+}
+.pay-label {
+    width: 130px; /* Aligns the colons roughly */
+}
+
+.invoice-signatory {
+    margin-top: 50px;
+}
+
+/* Utilities & Animations */
+.stagger-1 { animation-delay: 0.1s; }
+.stagger-2 { animation-delay: 0.2s; }
+.stagger-3 { animation-delay: 0.3s; }
+.stagger-4 { animation-delay: 0.4s; }
+.stagger-5 { animation-delay: 0.5s; }
+.stagger-6 { animation-delay: 0.6s; }
+.stagger-7 { animation-delay: 0.7s; }
+.stagger-8 { animation-delay: 0.8s; }
+
+@keyframes fadeInSlideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInSlideIn {
+    from { opacity: 0; transform: translateX(-20px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes fadeOutSlideOut {
+    from { opacity: 1; transform: translateX(0); }
+    to { opacity: 0; transform: translateX(-20px); }
+}
+
+@keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(6, 182, 212, 0.4); }
+    70% { box-shadow: 0 0 0 6px rgba(6, 182, 212, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(6, 182, 212, 0); }
+}
+
+/* Responsiveness */
+@media (max-width: 1200px) {
+    .app-container {
+        grid-template-columns: 1fr;
+        height: auto;
+        padding: 1rem;
+    }
+    
+    .editor-panel {
+        height: auto;
+        max-height: 80vh;
+    }
+    
+    .preview-panel {
+        height: 600px; /* Fixed height for preview box on mobile */
+    }
+    
+    .invoice-page-wrapper {
+        transform: scale(0.6);
+        transform-origin: top center;
+    }
+}
+
+@media (max-width: 768px) {
+    .input-row, .invoice-parties {
+        grid-template-columns: 1fr;
+        flex-direction: column;
+        gap: 1.25rem;
+    }
+    
+    .mobile-only {
+        display: inline-flex;
+    }
+    
+    .preview-toolbar .btn-generate {
+        display: none; /* Hide desktop button on tight screens */
+    }
+    
+    .invoice-page-wrapper {
+        transform: scale(0.45);
+    }
+}
+
+/* --- Login Page --- */
+.login-wrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    background-color: var(--bg-dark);
+}
+
+.auth-panel {
+    width: 100%;
+    max-width: 420px;
+    padding: 3rem 2.5rem;
+    position: relative;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+}
+
+
+.auth-divider {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    margin: 1.5rem 0;
+    color: var(--text-muted);
+}
+
+.auth-divider::before, 
+.auth-divider::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid var(--glass-border);
+}
+
+.auth-divider span {
+    padding: 0 1rem;
+    font-size: 0.85rem;
+}
+
+.auth-switch {
+    margin-top: 1.5rem;
+    text-align: center;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+.btn-text {
+    background: none;
+    border: none;
+    color: var(--accent-secondary);
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 0.9rem;
+}
+
+.btn-text:hover {
+    text-decoration: underline;
+}
+
+.auth-container {
+    display: flex;
+    align-items: center;
+    margin-left: auto;
+    margin-right: 1rem;
+}
