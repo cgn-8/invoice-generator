@@ -6,9 +6,10 @@
     const params = new URLSearchParams(window.location.search);
     const isAuthPage  = params.get('auth') === 'true';
     const isGuestPage = params.get('guest') === 'true';
+    const hasAuthCode = params.get('code') !== null;
     const hasAuthHash = window.location.hash.includes('access_token') || window.location.hash.includes('provider_token');
 
-    if (!isAuthPage && !isGuestPage && !hasAuthHash) {
+    if (!isAuthPage && !isGuestPage && !hasAuthHash && !hasAuthCode) {
         // Not explicitly requesting auth or guest mode — send to landing page
         window.location.replace('index.html');
         return;
@@ -61,10 +62,7 @@ function initializeGuestMode() {
 
 // Execute guest bypass immediately to minimize flashes of unauthenticated content
 const isGuestAuthenticated = initializeGuestMode();
-
-
-
-    if (isGuestAuthenticated) return;
+if (!isGuestAuthenticated) {
 
     // --- Supabase Configuration ---
     const SUPABASE_URL = 'https://tuigsckfsinefximtysx.supabase.co';
@@ -275,4 +273,4 @@ const isGuestAuthenticated = initializeGuestMode();
         });
     }
 
-
+}
