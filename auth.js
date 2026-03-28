@@ -70,8 +70,7 @@ if (!isGuestAuthenticated) {
 
     // Safety check - make sure the Supabase library loaded
     if (!window.supabase) {
-        console.error('Supabase library failed to load! Check your internet connection.');
-        return;
+        throw new Error('Supabase library failed to load! Check your internet connection.');
     }
 
     const _supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
