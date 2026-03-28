@@ -2,23 +2,9 @@
  * Landing Page Redirect
  * If user visits index.html without ?auth=true or ?guest=true, redirect to landing page.
  */
-(function redirectToLandingIfNeeded() {
-    const params = new URLSearchParams(window.location.search);
-    const isAuthPage  = params.get('auth') === 'true';
-    const isGuestPage = params.get('guest') === 'true';
-    const hasAuthCode = params.get('code') !== null;
-    const hasError = params.get('error') !== null || window.location.hash.includes('error_description');
-    const hasAuthHash = window.location.hash.includes('access_token') || window.location.hash.includes('provider_token');
-    
-    // Check if user is already logged in via localStorage token
-    const hasSession = Object.keys(localStorage).some(k => k.startsWith('sb-') && k.endsWith('-auth-token'));
-
-    if (!isAuthPage && !isGuestPage && !hasAuthHash && !hasAuthCode && !hasError && !hasSession) {
-        // Not explicitly requesting auth or guest mode — send to landing page
-        window.location.replace('index.html');
-        return;
-    }
-})();
+/**
+ * Landing Page Redirect logic moved to initial Supabase getSession check.
+ */
 
 function initializeGuestMode() {
     const urlParams = new URLSearchParams(window.location.search);
@@ -211,6 +197,20 @@ if (!isGuestAuthenticated) {
     _supabase.auth.getSession().then(({ data: { session } }) => {
         currentUser = session?.user ?? null;
         window.currentUser = currentUser; // Expose to app.js
+
+        // Catch explicitly unauthenticated naked app loads
+        const params = new URLSearchParams(window.location.search);
+        const isAuthPage  = params.get('auth') === 'true';
+        const isGuestPage = params.get('guest') === 'true';
+        const hasAuthCode = params.get('code') !== null;
+        const hasError = params.get('error') !== null || window.location.hash.includes('error_description');
+        const hasAuthHash = window.location.hash.includes('access_token') || window.location.hash.includes('provider_token');
+
+        if (!currentUser && !isAuthPage && !isGuestPage && !hasAuthHash && !hasAuthCode && !hasError) {
+            window.location.replace('index.html');
+            return;
+        }
+
         updateHeaderNav();
     });
 
