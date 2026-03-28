@@ -2,7 +2,6 @@
    InvoiceGen Landing Page — Interactions
    ============================================ */
 
-document.addEventListener('DOMContentLoaded', () => {
     // ── Scroll-triggered reveal animations ──
     const revealEls = document.querySelectorAll('.reveal');
     const revealObserver = new IntersectionObserver(
@@ -62,4 +61,3 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     });
-});

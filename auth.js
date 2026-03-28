@@ -62,7 +62,7 @@ function initializeGuestMode() {
 // Execute guest bypass immediately to minimize flashes of unauthenticated content
 const isGuestAuthenticated = initializeGuestMode();
 
-window.addEventListener('load', () => {
+
 
     if (isGuestAuthenticated) return;
 
@@ -275,4 +275,4 @@ window.addEventListener('load', () => {
         });
     }
 
-}); // end window.load
+

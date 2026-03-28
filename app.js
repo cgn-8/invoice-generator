@@ -1,5 +1,4 @@
-document.addEventListener('DOMContentLoaded', () => {
-    // --- State & DOM Elements ---
+// --- State & DOM Elements ---
     // --- Application State ---
     const urlParams = new URLSearchParams(window.location.search);
     const isGuestSession = urlParams.get('guest') === 'true';
@@ -296,4 +295,3 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Initialization ---
     renderItemsInput();
-});
