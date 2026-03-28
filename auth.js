@@ -1,3 +1,19 @@
+/**
+ * Landing Page Redirect
+ * If user visits index.html without ?auth=true or ?guest=true, redirect to landing page.
+ */
+(function redirectToLandingIfNeeded() {
+    const params = new URLSearchParams(window.location.search);
+    const isAuthPage  = params.get('auth') === 'true';
+    const isGuestPage = params.get('guest') === 'true';
+
+    if (!isAuthPage && !isGuestPage) {
+        // Not explicitly requesting auth or guest mode — send to landing page
+        window.location.replace('landing.html');
+        return;
+    }
+})();
+
 function initializeGuestMode() {
     const urlParams = new URLSearchParams(window.location.search);
     const isGuestActive = urlParams.get('guest') === 'true';
@@ -35,7 +51,7 @@ function initializeGuestMode() {
         if (btnLogout) {
             btnLogout.style.display = 'flex';
             btnLogout.innerHTML = '<i class="ri-logout-box-line"></i> Exit Guest Mode';
-            btnLogout.onclick = () => window.location.href = '/';
+            btnLogout.onclick = () => window.location.href = 'landing.html';
         }
         return true; 
     }
@@ -84,6 +100,13 @@ window.addEventListener('load', () => {
     const allEls = { appContent, loginPage, userEmailSpan, btnLogout, authForm, authTitle, authSubtitle, authSubmitBtn, authError, btnSwitchMode, authSwitchText, btnGoogleAuth };
     for (const [name, el] of Object.entries(allEls)) {
         if (!el) { console.error(`Auth: could not find element #${name}`); }
+    }
+
+    // Auto-switch to signup mode if ?signup=true
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('signup') === 'true') {
+        isSignupMode = true;
+        updateAuthUI();
     }
 
     // -----------------------------------------------
@@ -165,6 +188,8 @@ window.addEventListener('load', () => {
         try {
             const { error } = await _supabase.auth.signOut();
             if (error) throw error;
+            // Redirect to landing page after sign out
+            window.location.href = 'landing.html';
         } catch (err) {
             console.error('Logout error:', err);
             alert('Error logging out. Please try again.');
