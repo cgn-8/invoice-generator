@@ -6,10 +6,11 @@
     const params = new URLSearchParams(window.location.search);
     const isAuthPage  = params.get('auth') === 'true';
     const isGuestPage = params.get('guest') === 'true';
+    const hasAuthHash = window.location.hash.includes('access_token') || window.location.hash.includes('provider_token');
 
-    if (!isAuthPage && !isGuestPage) {
+    if (!isAuthPage && !isGuestPage && !hasAuthHash) {
         // Not explicitly requesting auth or guest mode — send to landing page
-        window.location.replace('landing.html');
+        window.location.replace('index.html');
         return;
     }
 })();
@@ -51,7 +52,7 @@ function initializeGuestMode() {
         if (btnLogout) {
             btnLogout.style.display = 'flex';
             btnLogout.innerHTML = '<i class="ri-logout-box-line"></i> Exit Guest Mode';
-            btnLogout.onclick = () => window.location.href = 'landing.html';
+            btnLogout.onclick = () => window.location.href = 'index.html';
         }
         return true; 
     }
@@ -173,7 +174,7 @@ window.addEventListener('load', () => {
             const { error } = await _supabase.auth.signInWithOAuth({
                 provider: 'google',
                 options: {
-                    redirectTo: window.location.origin,
+                    redirectTo: window.location.origin + '/app.html',
                 }
             });
             if (error) throw error;
@@ -189,7 +190,7 @@ window.addEventListener('load', () => {
             const { error } = await _supabase.auth.signOut();
             if (error) throw error;
             // Redirect to landing page after sign out
-            window.location.href = 'landing.html';
+            window.location.href = 'index.html';
         } catch (err) {
             console.error('Logout error:', err);
             alert('Error logging out. Please try again.');

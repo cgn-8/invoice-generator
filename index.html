@@ -3,254 +3,302 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Modern Invoice Generator</title>
+    <title>InvoiceGen — Create Professional Invoices in Seconds</title>
+    <meta name="description" content="InvoiceGen is a free, modern invoice generator with real-time preview, PDF export, and structured inputs. Built for freelancers, developers, and small businesses.">
+
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <!-- Icons -->
     <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
-    <!-- PDF Library -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <link rel="stylesheet" href="style.css">
+
+    <link rel="stylesheet" href="landing.css">
 </head>
 <body>
+    <!-- Background Blobs -->
     <div class="blob blob-1"></div>
     <div class="blob blob-2"></div>
     <div class="blob blob-3"></div>
 
-    <main class="app-container" id="app-content" style="display: none;">
-        <!-- LEFT PANEL: Editor -->
-        <section class="editor-panel glass-panel stagger-1">
-            <header class="editor-header">
-                <div class="header-logo">
-                    <i class="ri-article-line highlight-icon"></i>
-                    <h1>Invoice<span class="gradient-text">Gen</span></h1>
-                </div>
-                <div class="auth-container">
-                    <div id="auth-user-info" style="display: flex; align-items: center; gap: 1rem;">
-                        <span id="auth-user-email" style="font-size: 0.85rem; opacity: 0.8;"></span>
-                        <button class="btn btn-secondary btn-sm" id="btn-logout" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;">Sign Out</button>
-                    </div>
-                </div>
-                <!-- Action button at top for mobile -->
-                <button class="btn btn-primary btn-generate mobile-only" id="btn-generate-mobile">
-                    <i class="ri-download-cloud-2-line"></i> Download PDF
-                </button>
-            </header>
+    <!-- ========== NAVBAR ========== -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">
+                <i class="ri-article-line nav-logo-icon"></i>
+                <span>Invoice<span class="gradient-text">Gen</span></span>
+            </a>
 
-            <form id="invoice-form" class="editor-content">
-                <!-- Meta Section -->
-                <div class="form-section stagger-2">
-                    <h2 class="section-title">Invoice Details</h2>
-                    <div class="input-row">
-                        <div class="input-group">
-                            <label for="inv-number">Invoice Number</label>
-                            <input type="text" id="inv-number" value="INV-001" placeholder="e.g. INV-001">
-                        </div>
-                        <div class="input-group">
-                            <label for="inv-date">Invoice Date</label>
-                            <input type="text" id="inv-date" placeholder="e.g. 23 February 2026">
-                        </div>
-                    </div>
-                </div>
+            <ul class="nav-links" id="nav-links">
+                <li><a href="#features">Features</a></li>
+                <li><a href="#how-it-works">How It Works</a></li>
+                <li><a href="#use-cases">Use Cases</a></li>
+            </ul>
 
-                <!-- Parties Section -->
-                <div class="form-section stagger-3">
-                    <h2 class="section-title">Parties</h2>
-                    <div class="input-row">
-                        <div class="input-group">
-                            <label for="inv-from">From</label>
-                            <textarea id="inv-from" rows="3" placeholder="Your Name/Company&#10;Address Line 1&#10;Address Line 2"></textarea>
-                        </div>
-                        <div class="input-group">
-                            <label for="inv-to">To</label>
-                            <textarea id="inv-to" rows="3" placeholder="Client Name/Company&#10;Address Line 1&#10;Address Line 2"></textarea>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Subject & Description -->
-                <div class="form-section stagger-4">
-                    <h2 class="section-title">Project Context</h2>
-                    <div class="input-group">
-                        <label for="inv-subject">Subject</label>
-                        <input type="text" id="inv-subject" placeholder="e.g. Invoice for Script Preparation...">
-                    </div>
-                    <div class="input-group">
-                        <label for="inv-desc">Description</label>
-                        <textarea id="inv-desc" rows="3" placeholder="This invoice is for the work completed..."></textarea>
-                    </div>
-                </div>
-
-                <!-- Items Section -->
-                <div class="form-section stagger-5">
-                    <h2 class="section-title">Line Items</h2>
-                    <div id="items-container">
-                        <!-- Items injected here by JS -->
-                    </div>
-                    <button type="button" class="btn btn-secondary" id="btn-add-item">
-                        <i class="ri-add-line"></i> Add Item
-                    </button>
-                </div>
-
-                <!-- Payment Details -->
-                <div class="form-section stagger-6">
-                    <h2 class="section-title">Payment Info</h2>
-                    <div class="input-grid">
-                        <div class="input-group"><label>Mode of Payment</label><input type="text" id="pay-mode" placeholder="e.g. Bank Transfer"></div>
-                        <div class="input-group"><label>Account Number</label><input type="text" id="pay-acc" placeholder="e.g. 1234567890"></div>
-                        <div class="input-group"><label>IFSC Code</label><input type="text" id="pay-ifsc" placeholder="e.g. ABCD0001234"></div>
-                        <div class="input-group"><label>UPI ID</label><input type="text" id="pay-upi" placeholder="e.g. user@bank"></div>
-                        <div class="input-group"><label>PAN</label><input type="text" id="pay-pan" placeholder="e.g. ABCDE1234F"></div>
-                        <div class="input-group"><label>Email</label><input type="email" id="pay-email" placeholder="e.g. email@example.com"></div>
-                        <div class="input-group"><label>Phone Number</label><input type="text" id="pay-phone" placeholder="e.g. +91 9876543210 (PhonePe, GPay)"></div>
-                    </div>
-                </div>
-
-                <!-- Signatory -->
-                <div class="form-section stagger-7">
-                    <h2 class="section-title">Signatory</h2>
-                    <div class="input-group">
-                        <label for="inv-sign-msg">Footer Message</label>
-                        <input type="text" id="inv-sign-msg" value="Kindly process the payment for the above-mentioned work." placeholder="Closing message">
-                    </div>
-                    <div class="input-group">
-                        <label for="inv-sign-name">Signatory Name</label>
-                        <input type="text" id="inv-sign-name" placeholder="e.g. Punna Gurunanda">
-                    </div>
-                </div>
-            </form>
-        </section>
-
-        <!-- RIGHT PANEL: Preview -->
-        <section class="preview-panel stagger-8">
-            <div class="preview-toolbar">
-                <span class="preview-badge">Live Preview</span>
-                <button class="btn btn-primary" id="btn-generate-desktop">
-                    <i class="ri-download-cloud-2-line"></i> Generate PDF
-                </button>
+            <div class="nav-actions">
+                <a href="app.html?auth=true" class="btn btn-ghost" id="btn-nav-signin">Sign In</a>
+                <a href="app.html?auth=true&signup=true" class="btn btn-primary-cta" id="btn-nav-signup">Sign Up Free</a>
             </div>
-            
-            <div class="preview-wrapper">
-                <!-- The actual invoice to be exported -->
-                <div class="invoice-page-wrapper">
-                    <div id="invoice-preview" class="invoice-document">
-                        
-                        <div class="invoice-header">
-                            <h1>INVOICE</h1>
-                        </div>
 
-                        <div class="invoice-meta">
-                            <div>Invoice Number: <span id="out-inv-number"></span></div>
-                            <div>Invoice Date: <span id="out-inv-date"></span></div>
-                        </div>
+            <button class="nav-hamburger" id="nav-hamburger" aria-label="Toggle navigation menu">
+                <i class="ri-menu-3-line"></i>
+            </button>
+        </div>
 
-                        <div class="invoice-parties">
-                            <div class="party-block">
-                                <span class="party-label">From:</span>
-                                <div id="out-inv-from" class="pre-line"></div>
-                            </div>
-                            <div class="party-block">
-                                <span class="party-label">To:</span>
-                                <div id="out-inv-to" class="pre-line"></div>
-                            </div>
-                        </div>
+        <!-- Mobile Menu -->
+        <div class="mobile-menu" id="mobile-menu">
+            <a href="#features" class="mobile-link">Features</a>
+            <a href="#how-it-works" class="mobile-link">How It Works</a>
+            <a href="#use-cases" class="mobile-link">Use Cases</a>
+            <div class="mobile-menu-actions">
+                <a href="app.html?auth=true" class="btn btn-ghost" style="width:100%">Sign In</a>
+                <a href="app.html?auth=true&signup=true" class="btn btn-primary-cta" style="width:100%">Sign Up Free</a>
+            </div>
+        </div>
+    </nav>
 
-                        <div class="invoice-subject">
-                            Subject: <span id="out-inv-subject"></span>
-                        </div>
-
-                        <div class="invoice-description pre-line" id="out-inv-desc"></div>
-
-                        <div class="invoice-table-wrapper">
-                            <table class="invoice-table">
-                                <thead>
-                                    <tr>
-                                        <th class="col-desc">Description</th>
-                                        <th class="col-amt">Amount (₹)</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="out-items-body">
-                                    <!-- Rows injected here -->
-                                </tbody>
-                                <tfoot>
-                                    <tr>
-                                        <td class="col-desc text-right font-bold">Total Amount Payable</td>
-                                        <td class="col-amt font-bold" id="out-total">0</td>
-                                    </tr>
-                                </tfoot>
-                            </table>
-                        </div>
-
-                        <div class="invoice-payment">
-                            <div class="pay-row" id="row-pay-mode"><span class="pay-label">Mode of Payment:</span> <span id="out-pay-mode"></span></div>
-                            <div class="pay-row" id="row-pay-acc"><span class="pay-label">Account Number:</span> <span id="out-pay-acc"></span></div>
-                            <div class="pay-row" id="row-pay-ifsc"><span class="pay-label">IFSC Code:</span> <span id="out-pay-ifsc"></span></div>
-                            <div class="pay-row" id="row-pay-upi"><span class="pay-label">UPI ID:</span> <span id="out-pay-upi"></span></div>
-                            <div class="pay-row" id="row-pay-pan"><span class="pay-label">PAN:</span> <span id="out-pay-pan"></span></div>
-                            <div class="pay-row" id="row-pay-email"><span class="pay-label">Email:</span> <span id="out-pay-email"></span></div>
-                            <div class="pay-row" id="row-pay-phone"><span class="pay-label">Phone Number:</span> <span id="out-pay-phone"></span></div>
-                        </div>
-
-                        <div class="invoice-signatory">
-                            <div id="out-inv-sign-msg"></div>
-                            <br><br>
-                            <div>Sincerely,</div>
-                            <div id="out-inv-sign-name" class="font-bold"></div>
-                        </div>
-
-                    </div>
+    <!-- ========== HERO ========== -->
+    <section class="hero" id="hero">
+        <div class="hero-container">
+            <div class="hero-content reveal">
+                <span class="hero-badge"><i class="ri-flashlight-line"></i> Free & Open Source</span>
+                <h1 class="hero-title">
+                    Create Professional<br>
+                    Invoices in <span class="gradient-text">Seconds</span>
+                </h1>
+                <p class="hero-subtitle">
+                    Stop wasting time with clunky spreadsheets. InvoiceGen gives you a beautiful,
+                    real-time invoice editor with instant PDF export — no sign-up required to try.
+                </p>
+                <div class="hero-cta-group">
+                    <a href="app.html?auth=true&signup=true" class="btn btn-primary-cta btn-lg">
+                        <i class="ri-arrow-right-line"></i> Get Started Free
+                    </a>
+                    <a href="app.html?guest=true" class="btn btn-ghost btn-lg">
+                        <i class="ri-play-circle-line"></i> Try as Guest
+                    </a>
                 </div>
             </div>
-        </section>
-    </main>
 
-        <!-- Login Page -->
-        <div class="login-wrapper" id="login-page" style="display: flex;">
-            <div class="auth-panel glass-panel">
-                <div class="header-logo" style="display: flex; justify-content: center; margin-bottom: 1.5rem;">
-                    <i class="ri-article-line highlight-icon"></i>
-                    <h1 style="font-size: 1.5rem; font-weight: 700;">Invoice<span class="gradient-text">Gen</span></h1>
-                </div>
-
-                <h2 class="section-title" id="auth-title" style="margin-bottom: 0.5rem; justify-content: center; text-align: center;">Welcome Back</h2>
-                <p id="auth-subtitle" style="margin-bottom: 2rem; opacity: 0.7; font-size: 0.9rem; text-align: center;">Sign in to sync your generated invoices.</p>
-                
-                <form id="auth-form" class="editor-content" style="padding: 0; display: block; overflow: visible;">
-                    <div id="auth-error" class="auth-error-msg" style="display: none; color: #ff6b6b; font-size: 0.85rem; margin-bottom: 1rem; background: rgba(255,107,107,0.1); padding: 0.5rem; border-radius: 8px;"></div>
-                    <div class="input-group">
-                        <label for="auth-email">Email</label>
-                        <input type="email" id="auth-email" required placeholder="you@example.com">
+            <div class="hero-visual reveal reveal-delay-1">
+                <div class="hero-mockup">
+                    <div class="mockup-toolbar">
+                        <div class="mockup-dots">
+                            <span></span><span></span><span></span>
+                        </div>
+                        <span class="mockup-title">invoice-preview.pdf</span>
                     </div>
-                    <div class="input-group" style="margin-top: 1rem;">
-                        <label for="auth-password">Password</label>
-                        <input type="password" id="auth-password" required placeholder="••••••••">
+                    <div class="mockup-body">
+                        <div class="mockup-header">INVOICE</div>
+                        <div class="mockup-meta">
+                            <span>INV-001</span>
+                            <span>28 March 2026</span>
+                        </div>
+                        <div class="mockup-parties">
+                            <div class="mockup-party">
+                                <span class="mockup-label">From:</span>
+                                <span>Your Company</span>
+                            </div>
+                            <div class="mockup-party">
+                                <span class="mockup-label">To:</span>
+                                <span>Client Name</span>
+                            </div>
+                        </div>
+                        <div class="mockup-table">
+                            <div class="mockup-row mockup-row-header">
+                                <span>Description</span>
+                                <span>Amount</span>
+                            </div>
+                            <div class="mockup-row">
+                                <span>Web Development</span>
+                                <span class="mockup-amount">₹15,000</span>
+                            </div>
+                            <div class="mockup-row">
+                                <span>UI/UX Design</span>
+                                <span class="mockup-amount">₹8,000</span>
+                            </div>
+                            <div class="mockup-row mockup-row-total">
+                                <span>Total</span>
+                                <span class="mockup-amount">₹23,000</span>
+                            </div>
+                        </div>
+                        <div class="mockup-badge-live"><i class="ri-circle-fill"></i> Live Preview</div>
                     </div>
-                    <button type="submit" class="btn btn-primary" id="btn-auth-submit" style="width: 100%; margin-top: 1.5rem; justify-content: center;">
-                        <i class="ri-login-circle-line"></i> Sign In
-                    </button>
-                </form>
-                
-                <div class="auth-divider"><span>or</span></div>
-                
-                <button type="button" class="btn btn-secondary" id="btn-google-auth" style="width: 100%; display: flex; justify-content: center; align-items: center; gap: 0.5rem;">
-                    <i class="ri-google-fill"></i> Continue with Google
-                </button>
-
-                <button type="button" class="btn btn-secondary" id="btn-guest-mode" onclick="window.location.href='/?guest=true'" style="width: 100%; display: flex; justify-content: center; align-items: center; gap: 0.5rem; margin-top: 0.5rem; opacity: 0.7; border-style: dashed;">
-                    <i class="ri-user-line"></i> Continue as Guest
-                </button>
-                
-                <div class="auth-switch">
-                    <span id="auth-switch-text">New here?</span>
-                    <button class="btn-text" id="btn-switch-auth-mode" type="button">Create an account</button>
                 </div>
             </div>
         </div>
+    </section>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="auth.js"></script>
-    <script src="app.js"></script>
+    <!-- ========== FEATURES ========== -->
+    <section class="section features" id="features">
+        <div class="section-container">
+            <div class="section-header reveal">
+                <span class="section-badge">Powerful Features</span>
+                <h2 class="section-title">Everything you need to<br><span class="gradient-text">invoice like a pro</span></h2>
+                <p class="section-subtitle">No bloatware — just the essentials, beautifully crafted.</p>
+            </div>
+
+            <div class="features-grid">
+                <div class="feature-card glass-card reveal">
+                    <div class="feature-icon-wrap">
+                        <i class="ri-eye-line"></i>
+                    </div>
+                    <h3>Real-Time Preview</h3>
+                    <p>See your invoice update instantly as you type. Every field change is reflected live in the A4-formatted preview pane.</p>
+                </div>
+
+                <div class="feature-card glass-card reveal reveal-delay-1">
+                    <div class="feature-icon-wrap">
+                        <i class="ri-file-pdf-2-line"></i>
+                    </div>
+                    <h3>One-Click PDF Export</h3>
+                    <p>Generate pixel-perfect, print-ready A4 PDFs in a single click. Your invoice is saved locally and optionally to the cloud.</p>
+                </div>
+
+                <div class="feature-card glass-card reveal reveal-delay-2">
+                    <div class="feature-icon-wrap">
+                        <i class="ri-layout-3-line"></i>
+                    </div>
+                    <h3>Structured Inputs</h3>
+                    <p>Clean, organized form fields for parties, line items, payment details, and signatory — ensuring complete, professional invoices every time.</p>
+                </div>
+
+                <div class="feature-card glass-card reveal reveal-delay-3">
+                    <div class="feature-icon-wrap">
+                        <i class="ri-shield-check-line"></i>
+                    </div>
+                    <h3>Secure Access</h3>
+                    <p>Sign in with email or Google OAuth. Your invoices are stored securely in the cloud with Supabase, accessible only to you.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== HOW IT WORKS ========== -->
+    <section class="section how-it-works" id="how-it-works">
+        <div class="section-container">
+            <div class="section-header reveal">
+                <span class="section-badge">Simple Workflow</span>
+                <h2 class="section-title">Three steps to a<br><span class="gradient-text">perfect invoice</span></h2>
+                <p class="section-subtitle">From blank page to professional PDF in under a minute.</p>
+            </div>
+
+            <div class="steps-grid">
+                <div class="step-card reveal">
+                    <div class="step-number">1</div>
+                    <div class="step-icon-wrap">
+                        <i class="ri-edit-2-line"></i>
+                    </div>
+                    <h3>Fill in Details</h3>
+                    <p>Enter your company info, client details, line items, and payment information using our clean, guided form.</p>
+                </div>
+
+                <div class="step-connector reveal">
+                    <i class="ri-arrow-right-s-line"></i>
+                </div>
+
+                <div class="step-card reveal reveal-delay-1">
+                    <div class="step-number">2</div>
+                    <div class="step-icon-wrap">
+                        <i class="ri-eye-line"></i>
+                    </div>
+                    <h3>Preview Live</h3>
+                    <p>Watch your invoice take shape in real-time on the side panel. Make adjustments until it's perfect.</p>
+                </div>
+
+                <div class="step-connector reveal reveal-delay-1">
+                    <i class="ri-arrow-right-s-line"></i>
+                </div>
+
+                <div class="step-card reveal reveal-delay-2">
+                    <div class="step-number">3</div>
+                    <div class="step-icon-wrap">
+                        <i class="ri-download-cloud-2-line"></i>
+                    </div>
+                    <h3>Export PDF</h3>
+                    <p>Hit "Generate PDF" and download a professional, print-ready A4 document instantly. Done!</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== USE CASES ========== -->
+    <section class="section use-cases" id="use-cases">
+        <div class="section-container">
+            <div class="section-header reveal">
+                <span class="section-badge">Built For You</span>
+                <h2 class="section-title">Who uses <span class="gradient-text">InvoiceGen</span>?</h2>
+                <p class="section-subtitle">Whether you're a solo creator or a growing team, InvoiceGen fits your workflow.</p>
+            </div>
+
+            <div class="usecases-grid">
+                <div class="usecase-card glass-card reveal">
+                    <div class="usecase-icon-wrap">
+                        <i class="ri-user-star-line"></i>
+                    </div>
+                    <h3>Freelancers</h3>
+                    <p>Bill clients quickly with professional invoices. Track payment details and export clean PDFs for every project you deliver.</p>
+                </div>
+
+                <div class="usecase-card glass-card reveal reveal-delay-1">
+                    <div class="usecase-icon-wrap">
+                        <i class="ri-code-s-slash-line"></i>
+                    </div>
+                    <h3>Developers</h3>
+                    <p>Self-hosted, open-source, and customizable. Fork it, extend it, or integrate it into your own tooling stack.</p>
+                </div>
+
+                <div class="usecase-card glass-card reveal reveal-delay-2">
+                    <div class="usecase-icon-wrap">
+                        <i class="ri-building-2-line"></i>
+                    </div>
+                    <h3>Small Businesses</h3>
+                    <p>No expensive subscriptions. Generate unlimited invoices with a clean template, structured inputs, and secure cloud storage.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== CTA BANNER ========== -->
+    <section class="section cta-banner" id="cta-banner">
+        <div class="section-container">
+            <div class="cta-card glass-card reveal">
+                <h2>Ready to create your first invoice?</h2>
+                <p>Join hundreds of freelancers and small businesses who use InvoiceGen to bill clients professionally.</p>
+                <div class="cta-actions">
+                    <a href="app.html?auth=true&signup=true" class="btn btn-primary-cta btn-lg">
+                        <i class="ri-arrow-right-line"></i> Get Started Free
+                    </a>
+                    <a href="app.html?guest=true" class="btn btn-ghost btn-lg">
+                        Try Without Account
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== FOOTER ========== -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-brand">
+                <a href="index.html" class="nav-logo">
+                    <i class="ri-article-line nav-logo-icon"></i>
+                    <span>Invoice<span class="gradient-text">Gen</span></span>
+                </a>
+                <p>Professional invoices, zero hassle.</p>
+            </div>
+            <div class="footer-links">
+                <a href="#features">Features</a>
+                <a href="#how-it-works">How It Works</a>
+                <a href="#use-cases">Use Cases</a>
+                <a href="app.html?auth=true">Sign In</a>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 InvoiceGen. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="landing.js"></script>
 </body>
 </html>
