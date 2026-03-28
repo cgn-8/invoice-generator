@@ -140,9 +140,10 @@ if (!isGuestAuthenticated) {
 
             } else {
                 // --- Sign In ---
-                const { error } = await _supabase.auth.signInWithPassword({ email, password });
+                const { data, error } = await _supabase.auth.signInWithPassword({ email, password });
                 if (error) throw error;
-                // Auth state observer will handle UI transition
+                // Explicit redirect to dashboard — prevents Vercel cold-start race condition
+                window.location.href = 'app.html?auth=true';
             }
         } catch (err) {
             showAuthError(err.message);
@@ -161,7 +162,7 @@ if (!isGuestAuthenticated) {
             const { error } = await _supabase.auth.signInWithOAuth({
                 provider: 'google',
                 options: {
-                    redirectTo: window.location.origin + '/app.html',
+                    redirectTo: window.location.origin + '/app.html?auth=true',
                 }
             });
             if (error) throw error;
@@ -207,7 +208,21 @@ if (!isGuestAuthenticated) {
         const hasAuthHash = window.location.hash.includes('access_token') || window.location.hash.includes('provider_token');
 
         if (!currentUser && !isAuthPage && !isGuestPage && !hasAuthHash && !hasAuthCode && !hasError) {
-            window.location.replace('index.html');
+            // Double-check after a short delay to handle Vercel cold-start latency
+            // before firing the redirect guard
+            setTimeout(() => {
+                _supabase.auth.getSession().then(({ data: { session: recheckSession } }) => {
+                    if (!recheckSession?.user) {
+                        window.location.replace('index.html');
+                    }
+                    // If session exists now, stay and update UI
+                    if (recheckSession?.user) {
+                        currentUser = recheckSession.user;
+                        window.currentUser = currentUser;
+                        updateHeaderNav();
+                    }
+                });
+            }, 350);
             return;
         }
 
