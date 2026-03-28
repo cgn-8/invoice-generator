@@ -7,9 +7,13 @@
     const isAuthPage  = params.get('auth') === 'true';
     const isGuestPage = params.get('guest') === 'true';
     const hasAuthCode = params.get('code') !== null;
+    const hasError = params.get('error') !== null || window.location.hash.includes('error_description');
     const hasAuthHash = window.location.hash.includes('access_token') || window.location.hash.includes('provider_token');
+    
+    // Check if user is already logged in via localStorage token
+    const hasSession = Object.keys(localStorage).some(k => k.startsWith('sb-') && k.endsWith('-auth-token'));
 
-    if (!isAuthPage && !isGuestPage && !hasAuthHash && !hasAuthCode) {
+    if (!isAuthPage && !isGuestPage && !hasAuthHash && !hasAuthCode && !hasError && !hasSession) {
         // Not explicitly requesting auth or guest mode — send to landing page
         window.location.replace('index.html');
         return;
